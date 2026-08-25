@@ -1,7 +1,7 @@
 # REPOSITORIO-BRAZO-ROBOTICO-6-GDL-XK-LS5B
 
 git add .
-git commit -m "Agrega enlace HTML de redireccion a Google Drive para recursos pesados"
+git commit -m "https://drive.google.com/drive/folders/1eebz2k1js_J-q01hgVVoKYDfFnWV-fHu?usp=drive_link"
 git push origin main
 
 Esta sección complementa la documentación técnica de la planta flexible integrando los análisis de identificación de variables, modelado del lazo de control y desarrollo de software embebido para el brazo robótico de 6 GDL.
