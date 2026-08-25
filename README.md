@@ -61,4 +61,44 @@ El movimiento de las 6 articulaciones utiliza motores paso a paso bipolares dist
 ### A. Definición del Lazo de Control (Lazo Abierto Actual)
 
 Actualmente, la planta opera en un esquema de **Lazo Abierto** para la regulación de posicionamiento[cite: 1]:
+1. **Proceso:** El PIC genera la Variable Manipulada $u(t)$ como señales discretas enviadas a los drivers de potencia[cite: 1]. Los drivers regulan la corriente en las bobinas de los motores NEMA para producir el desplazamiento angular $\theta_i$ (Variable Controlada $y(t)$)[cite: 1].
+2. **Rol de la Senso-percepción:** Los sensores magnéticos y mecánicos no retroalimentan el error en tiempo real[cite: 1]. Se emplean exclusivamente como interrupciones de seguridad contra sobrecarrera y calibración del cero mecánico (*Homing*)[cite: 1].
+3. **Perturbaciones ($d(t)$):** Cambios de masa en el efector final, rozamiento articular, backlash en reductores y posibles pérdidas de pasos bajo torque extremo[cite: 1].
+
+### B. Matriz de Variables del Sistema
+
+| Categoría | Símbolo | Componente / Señal | Descripción Técnica |
+| :--- | :--- | :--- | :--- |
+| **Referencia** | $r(t)$ | Firmware / Tablero | Vector de posiciones angulares objetivo $[\theta_{1d}, \dots, \theta_{6d}]^T$[cite: 1]. |
+| **Manipulada (MV)** | $u(t)$ | PIC16F1946 $\to$ Drivers | Tren de pulsos PWM/digitales y direcciones $(0-5\text{V})$[cite: 1]. |
+| **Controlada (PV)** | $y(t)$ | Ejes mecánicos | Ángulo real alcanzado por cada articulación $[\theta_1, \dots, \theta_6]^T$[cite: 1]. |
+| **Protección** | $b(t)$ | NJK-5002C / M102-011 | Estado binario de carrera para interrupción del control[cite: 1]. |
+| **Perturbación (DV)** | $d(t)$ | Carga / Fricción | Variaciones de inercia, torques externos y fluctuaciones de alimentación[cite: 1]. |
+
+---
+
+## 3. Arquitectura del Software Embebido (MPLAB XC8)
+
+El software embebido fue desarrollado en lenguaje C ANSI bajo **MPLAB X IDE v6.x** y compilado con **XC8** (estándar C99)[cite: 2]. La arquitectura corresponde a una máquina de estados montada sobre un **Super-Loop**:
+
+### Estructura de Ejecución
+
+```c
+void main(void) {
+    IO_init();         // Configuración de TRISx y ANSELx (Desactivación analógica)
+    PWM_init();        // Inicialización de CCP1/CCP2 con Timer2/Timer4 (Velocidad)
+
+    while(1) {
+        if (!kaut) {   // --- MODO MANUAL ---
+            hand();    // Lectura de botonera y movimiento axis por axis
+            check();   // Verificación de finales de carrera
+            // Debounce delay (20ms)
+        } 
+        else {         // --- MODO AUTOMÁTICO ---
+            keycan();  // Escaneo de banderas de control
+            rest();    // Ejecución de rutina Homing (Calibración Cero)
+            aut();     // Ejecución de 5 secuencias cinemáticas secuenciales
+        }
+    }
+}
 
