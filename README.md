@@ -3,7 +3,9 @@
 "https://drive.google.com/drive/folders/1eebz2k1js_J-q01hgVVoKYDfFnWV-fHu?usp=drive_link"
 
 
-Esta sección complementa la documentación técnica de la planta flexible integrando los análisis de identificación de variables, modelado del lazo de control y desarrollo de software embebido para el brazo robótico de 6 GDL.
+Esta sección complementa la documentación técnica de la planta flexible integrando los análisis de identificación de variables, modelado del lazo de control y desarrollo de software embebido para el brazo robótico de 6 GDL.  
+
+Para poder visualizar el repositorio, descargar Archivos.html y ejecutar
 
 ---
 
